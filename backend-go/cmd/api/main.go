@@ -14,6 +14,16 @@ import (
 // @description 记账应用后端 API
 // @BasePath /api/v1
 
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
+
+// @tag.name bills
+// @tag.description 账单相关接口
+
+// @tag.name statistics
+// @tag.description 统计相关接口
+
 func main() {
 	// 加载配置
 	cfg := config.LoadConfig()

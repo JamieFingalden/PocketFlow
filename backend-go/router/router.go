@@ -4,7 +4,10 @@ import (
 	"backend-go/api"
 	"backend-go/config"
 	"backend-go/middleware"
+	_ "backend-go/docs"
 
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,6 +29,9 @@ func RegisterRoutes(r *gin.Engine, cfg *config.Config) {
 	// OCR 代理接口
 	r.POST("/ocr/process", api.ProcessOCR)
 
+	// Swagger 文档路由
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	// API v1 路由组
 	v1 := r.Group("/api/v1")
 	{
@@ -43,6 +49,12 @@ func RegisterRoutes(r *gin.Engine, cfg *config.Config) {
 			authorized.GET("/bills/:id", api.GetBill)
 			authorized.PUT("/bills/:id", api.UpdateBill)
 			authorized.DELETE("/bills/:id", api.DeleteBill)
+
+			// 统计相关路由
+			authorized.GET("/statistics/monthly-summary", api.GetMonthlySummary)
+			authorized.GET("/statistics/category", api.GetCategoryStatistics)
+			authorized.GET("/statistics/daily", api.GetDailyStatistics)
+			authorized.GET("/statistics/monthly-chart", api.GetMonthlyChartStatistics)
 		}
 	}
 }

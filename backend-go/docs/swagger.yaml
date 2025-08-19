@@ -1,0 +1,163 @@
+basePath: /api/v1
+definitions:
+  utils.Response:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: 记账应用后端 API
+  title: PocketFlow API
+  version: "1.0"
+paths:
+  /api/v1/statistics/category:
+    get:
+      consumes:
+      - application/json
+      description: 获取指定年月的收入或支出分类统计
+      parameters:
+      - description: 类型 (income 或 expense)
+        in: query
+        name: type
+        required: true
+        type: string
+      - description: 年份
+        in: query
+        name: year
+        required: true
+        type: integer
+      - description: 月份
+        in: query
+        name: month
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: 获取分类统计
+      tags:
+      - statistics
+  /api/v1/statistics/daily:
+    get:
+      consumes:
+      - application/json
+      description: 获取指定年月的每日收支统计
+      parameters:
+      - description: 年份
+        in: query
+        name: year
+        required: true
+        type: integer
+      - description: 月份
+        in: query
+        name: month
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: 获取日常统计
+      tags:
+      - statistics
+  /api/v1/statistics/monthly-chart:
+    get:
+      consumes:
+      - application/json
+      description: 获取指定年份的月度收支统计
+      parameters:
+      - description: 年份
+        in: query
+        name: year
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: 获取月度图表统计
+      tags:
+      - statistics
+  /api/v1/statistics/monthly-summary:
+    get:
+      consumes:
+      - application/json
+      description: 获取指定年月的收入、支出和结余统计
+      parameters:
+      - description: 年份
+        in: query
+        name: year
+        required: true
+        type: integer
+      - description: 月份
+        in: query
+        name: month
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: 获取月度概览统计
+      tags:
+      - statistics
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
+tags:
+- description: 账单相关接口
+  name: bills
+- description: 统计相关接口
+  name: statistics
