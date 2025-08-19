@@ -1,0 +1,20 @@
+server:
+  port: "8080"
+  mode: "debug"
+
+database:
+  host: "localhost"
+  port: "3306"
+  user: "root"
+  password: "123456"
+  name: "pocketflow"
+  charset: "utf8mb4"
+  parseTime: true
+  loc: "Local"
+
+jwt:
+  secret: "pocketflow-secret-key"
+  expire: 86400
+
+ocr:
+  service_url: "http://localhost:5000/ocr/process"
