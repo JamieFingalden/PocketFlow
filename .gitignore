@@ -1,0 +1,42 @@
+# IDE配置文件
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Claude Code配置
+.claude/
+
+# 编译文件
+*.exe
+*.out
+*.class
+
+# Python相关
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+.coverage
+.pytest_cache/
+
+# 环境变量文件
+.env
+
+# 日志文件
+*.log
+
+# 数据库文件
+*.db
+*.sqlite
+
+# OS生成文件
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

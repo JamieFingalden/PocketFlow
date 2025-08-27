@@ -1,154 +1,240 @@
 # -*- coding: utf-8 -*-
 """
-AI模型调用模块：使用本地Qwen模型进行消费分类
+AI模型调用模块：使用本地Ollama服务进行消费分类，备用方案为阿里云百炼API
 """
 
-import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
 import requests
 import json
 import os
+from datetime import date
+from dotenv import load_dotenv
 
-# 全局变量用于存储模型和分词器
-model = None
-tokenizer = None
+# 加载环境变量
+load_dotenv()
 
-# 定义支持的分类标签
-CATEGORIES = ["餐饮", "交通", "购物", "医疗", "其他"]
+# 默认分类标签
+DEFAULT_CATEGORIES = ["餐饮", "交通", "购物", "医疗", "其他"]
 
-def initialize_model(model_path="Qwen/Qwen-7B-Chat"):
+# Ollama服务地址
+OLLAMA_URL = "http://localhost:11434/api/generate"
+
+# 阿里云百炼API配置
+DASHSCOPE_API_KEY = os.getenv('DASHSCOPE_API_KEY', 'your_api_key_here')
+DASHSCOPE_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+
+def initialize_model():
     """
-    初始化AI模型和分词器，在服务启动时调用一次
+    初始化AI模型（Ollama版本）
+    实际上不需要初始化，只需要确保Ollama服务正在运行
+    """
+    print("AI模块初始化完成（Ollama版本）")
+    return True
+
+def get_user_categories(user_id=None):
+    """
+    从数据库获取用户自定义分类列表
+    这里是模拟实现，实际应用中需要连接真实数据库
     
     Args:
-        model_path (str): 模型路径，可以是HuggingFace模型名或本地路径
-    """
-    global model, tokenizer
-    
-    print("正在加载AI模型，请稍候...")
-    
-    # 加载分词器
-    tokenizer = AutoTokenizer.from_pretrained(
-        model_path,
-        trust_remote_code=True
-    )
-    
-    # 加载模型（使用float16以节省内存）
-    model = AutoModelForCausalLM.from_pretrained(
-        model_path,
-        torch_dtype=torch.float16,
-        device_map="auto",
-        trust_remote_code=True
-    )
-    
-    # 设置为评估模式
-    model.eval()
-    
-    print("AI模型加载完成")
-
-def search_web(query):
-    """
-    简单的联网搜索功能（可选实现）
-    这里使用一个简单的API示例，实际应用中可能需要替换为更稳定的搜索服务
-    
-    Args:
-        query (str): 搜索查询
+        user_id (int): 用户ID
         
     Returns:
-        str: 搜索结果摘要
+        list: 用户分类列表
     """
-    try:
-        # 使用一个简单的搜索API（示例，可能需要替换）
-        search_url = f"https://api.peacefulapi.com/search?q={query}"
-        response = requests.get(search_url, timeout=5)
-        if response.status_code == 200:
-            data = response.json()
-            # 提取前几个结果
-            results = data.get("results", [])[:3]
-            return "\n".join([f"- {r.get('title', '')}: {r.get('snippet', '')}" for r in results])
-        else:
-            return "搜索失败"
-    except Exception as e:
-        return f"搜索出错: {str(e)}"
+    # 模拟数据库查询
+    # 实际应用中这里应该查询数据库获取用户自定义分类
+    if user_id is not None:
+        # 模拟从数据库获取用户自定义分类
+        # 这里应该使用真实的数据库查询
+        try:
+            # 示例：从SQLite数据库查询用户分类
+            # import sqlite3
+            # conn = sqlite3.connect('expenses.db')
+            # cursor = conn.cursor()
+            # cursor.execute("SELECT category_name FROM user_categories WHERE user_id = ?", (user_id,))
+            # user_categories = [row[0] for row in cursor.fetchall()]
+            # conn.close()
+            # return user_categories
+            
+            # 临时返回模拟数据
+            return ["餐饮", "交通", "购物", "医疗", "娱乐", "教育"]
+        except Exception as e:
+            print(f"获取用户分类失败: {str(e)}")
+            return DEFAULT_CATEGORIES
+    else:
+        return DEFAULT_CATEGORIES
 
-def classify_expense(ocr_text, enable_search=False):
+def classify_with_ollama(ocr_text, user_categories):
     """
-    使用AI模型对OCR文本进行消费分类
+    使用Ollama本地部署的Qwen模型对OCR文本进行消费分类
     
     Args:
         ocr_text (str): OCR识别出的文本
-        enable_search (bool): 是否启用联网搜索功能
+        user_categories (list): 用户分类列表
         
     Returns:
-        str: 分类结果
+        dict: 分类结果
     """
-    global model, tokenizer
+    # 构造分类选项字符串
+    categories_str = ",".join(user_categories)
     
-    if model is None or tokenizer is None:
-        raise RuntimeError("模型未初始化，请先调用initialize_model()")
-    
-    # 构造系统提示词
-    system_prompt = f"""你是一个账单分类助手。
+    # 构造系统提示词（简化版以节省内存）
+    prompt = f"""你是一个账单分类助手。
 你将接收一段中文账单文字，任务是：
 1. 判断账单属于哪一类（从以下类别中选择一个）：
-["餐饮", "交通", "购物", "医疗", "其他"]
+[{categories_str}]
 2. 提取消费金额（数字即可，可以有小数）。
 3. 提取消费日期，输出完整的'YYYY-MM-DD'格式日期：
    - 如果日期是相对描述（如"今天"、"昨天"、"周一"），请根据当前日期推算具体日期。
    - 如果账单只提供"月-日"，则使用当前年份补全。
 4. 严格按照指定的JSON格式返回，不要多余文字。
 
+输出示例：'美团外卖 11:30 23.50元'
+返回格式：{{"category": "类别", "amount": 金额数字, "date": "YYYY-MM-DD"}}
+
 用户提供的文字是：{ocr_text}
-请严格按照指定的JSON格式返回，不要多余文字。
+请严格按照指定的JSON格式返回，不要多余文字。"""
+    
+    # 构造请求数据（优化参数以适应16GB内存）
+    data = {
+        "model": "qwen2:1.5b",  # 使用更小的1.5B版本模型以适应16GB内存
+        "prompt": prompt,
+        "stream": False,
+        "options": {
+            "temperature": 0.1,     # 降低随机性以获得更确定的结果
+            "top_p": 0.9,
+            "max_tokens": 50,       # 增加一点长度以适应更多分类
+            "num_ctx": 2048         # 减少上下文长度以节省内存
+        }
+    }
+    
+    # 发送请求到Ollama API
+    response = requests.post(OLLAMA_URL, json=data, timeout=30)
+    
+    if response.status_code == 200:
+        result = response.json()
+        response_text = result.get("response", "").strip()
+        
+        # 尝试解析JSON响应
+        try:
+            # 尝试从响应中提取JSON部分
+            import re
+            json_match = re.search(r'\{.*\}', response_text)
+            if json_match:
+                result_json = json_match.group()
+                result = json.loads(result_json)
+                return result
+            else:
+                raise ValueError("无法从响应中提取JSON")
+        except Exception as e:
+            raise RuntimeError(f"解析Ollama响应失败: {str(e)}")
+    else:
+        raise RuntimeError(f"Ollama API调用失败: {response.status_code}")
+
+def classify_with_dashscope(ocr_text, user_categories):
+    """
+    使用阿里云百炼API对OCR文本进行消费分类
+    
+    Args:
+        ocr_text (str): OCR识别出的文本
+        user_categories (list): 用户分类列表
+        
+    Returns:
+        dict: 分类结果
+    """
+    # 构造分类选项字符串
+    categories_str = ",".join(user_categories)
+    
+    today_str = date.today().strftime("%Y-%m-%d")
+    
+    # 构造系统提示词
+    system_prompt = f"""你是一个账单分类助手。
+你将接收一段中文账单文字，任务是：
+1. 判断账单属于哪一类（从以下类别中选择一个）：
+[{categories_str}]
+2. 提取消费金额（数字即可，可以有小数）。
+3. 提取消费日期，输出完整的'YYYY-MM-DD'格式日期：
+   - 如果日期是相对描述（如"今天"、"昨天"、"周一"），请根据当前日期推算具体日期。
+   - 如果账单只提供"月-日"，则使用当前年份补全。
+4. 严格按照指定的JSON格式返回，不要多余文字。
+
 输出示例：'美团外卖 11:30 23.50元'
 返回格式：{{"category": "类别", "amount": 金额数字, "date": "YYYY-MM-DD"}}"""
     
-    # 如果启用搜索功能，可以先进行搜索补充信息
-    if enable_search:
-        # 提取关键词进行搜索（简单实现）
-        search_results = search_web(ocr_text[:50])  # 取前50个字符作为搜索词
-        system_prompt += f"\n\n参考信息：\n{search_results}"
+    # 构造请求数据
+    data = {
+        "model": "qwen-plus",
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "system", "content": f"这个是{today_str}当前时间"},
+            {"role": "user", "content": ocr_text},
+        ]
+    }
     
-    # 使用分词器编码输入
-    inputs = tokenizer(system_prompt, return_tensors="pt").to(model.device)
+    # 设置请求头
+    headers = {
+        "Authorization": f"Bearer {DASHSCOPE_API_KEY}",
+        "Content-Type": "application/json"
+    }
     
-    # 生成响应（设置最大长度和停止条件以提高响应速度）
-    with torch.no_grad():
-        outputs = model.generate(
-            **inputs,
-            max_new_tokens=10,     # 限制生成长度以提高速度
-            temperature=0.1,       # 降低随机性以获得更确定的结果
-            top_p=0.9,
-            do_sample=False,       # 禁用采样以获得确定性结果
-            pad_token_id=tokenizer.pad_token_id,
-            eos_token_id=tokenizer.eos_token_id
-        )
+    # 发送请求到阿里云百炼API
+    response = requests.post(DASHSCOPE_URL + "/chat/completions", 
+                           json=data, headers=headers, timeout=30)
     
-    # 解码输出
-    response = tokenizer.decode(outputs[0], skip_special_tokens=True)
-    
-    # 提取JSON格式的结果
-    # 假设模型会返回JSON格式的字符串，我们尝试解析它
-    try:
-        # 尝试从响应中提取JSON部分
-        import re
-        json_match = re.search(r'\{.*\}', response)
-        if json_match:
-            result_json = json_match.group()
-            result = json.loads(result_json)
-            # 验证返回的分类是否在预定义的分类列表中
-            if result.get("category") in CATEGORIES:
+    if response.status_code == 200:
+        result = response.json()
+        response_text = result["choices"][0]["message"]["content"].strip()
+        
+        # 尝试解析JSON响应
+        try:
+            # 尝试从响应中提取JSON部分
+            import re
+            json_match = re.search(r'\{.*\}', response_text)
+            if json_match:
+                result_json = json_match.group()
+                result = json.loads(result_json)
                 return result
             else:
-                # 如果分类不在预定义列表中，返回"其他"
-                result["category"] = "其他"
-                return result
-        else:
-            # 如果没有找到JSON格式，返回默认值
-            return {"category": "其他", "amount": 0.0, "date": "1900-01-01"}
+                raise ValueError("无法从响应中提取JSON")
+        except Exception as e:
+            raise RuntimeError(f"解析阿里云百炼API响应失败: {str(e)}")
+    else:
+        raise RuntimeError(f"阿里云百炼API调用失败: {response.status_code}")
+
+def classify_expense(ocr_text, user_id=None):
+    """
+    使用AI模型对OCR文本进行消费分类
+    优先使用本地Ollama服务，如果不可用则使用阿里云百炼API
+    
+    Args:
+        ocr_text (str): OCR识别出的文本
+        user_id (int): 用户ID，用于获取用户自定义分类
+        
+    Returns:
+        dict: 分类结果
+    """
+    # 获取用户分类列表（包含默认分类）
+    user_categories = get_user_categories(user_id)
+    
+    # 首先尝试使用本地Ollama服务
+    try:
+        print("正在尝试使用本地Ollama服务...")
+        result = classify_with_ollama(ocr_text, user_categories)
+        print("本地Ollama服务调用成功")
+        return result
     except Exception as e:
-        # 如果解析失败，返回默认值
-        return {"category": "其他", "amount": 0.0, "date": "1900-01-01"}
+        print(f"本地Ollama服务调用失败: {str(e)}")
+        print("正在尝试使用阿里云百炼API...")
+        
+        # 如果Ollama服务不可用，尝试使用阿里云百炼API
+        try:
+            result = classify_with_dashscope(ocr_text, user_categories)
+            print("阿里云百炼API调用成功")
+            return result
+        except Exception as e2:
+            print(f"阿里云百炼API调用失败: {str(e2)}")
+            # 如果两种方式都失败，返回默认值
+            return {"category": "其他", "amount": 0.0, "date": "1900-01-01"}
 
 # 测试代码（可选）
 if __name__ == "__main__":

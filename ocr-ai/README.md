@@ -28,7 +28,15 @@ test/
 pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 ```
 
-### 3. 安装Ollama服务
+### 3. 配置环境变量
+复制 `.env.example` 文件并重命名为 `.env`，然后在其中设置您的阿里云百炼API密钥：
+```bash
+cp .env.example .env
+```
+
+编辑 `.env` 文件，将 `your_dashscope_api_key_here` 替换为您的实际API密钥。
+
+### 4. 安装Ollama服务
 1. 访问 https://ollama.com/download 下载对应系统的安装包
 2. 安装并启动Ollama服务
 3. 下载Qwen2 1.5B模型：
@@ -36,12 +44,12 @@ pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
    ollama pull qwen2:1.5b
    ```
 
-### 4. 启动应用
+### 5. 启动应用
 ```bash
 python app.py
 ```
 
-### 5. 调用接口
+### 6. 调用接口
 ```bash
 curl -X POST -F "image=@bill.jpg" http://localhost:5000/process_image
 ```
