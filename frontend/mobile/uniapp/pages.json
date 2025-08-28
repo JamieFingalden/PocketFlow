@@ -1,0 +1,92 @@
+// 配置参考 https://uniapp.dcloud.io/collocation/pages?id=pages
+{
+  "pages": [
+    {
+      "path": "pages/login/login",
+      "style": {
+        "navigationBarTitleText": "登录"
+      }
+    },
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "首页"
+      }
+    },
+    {
+      "path": "pages/bills/bills",
+      "style": {
+        "navigationBarTitleText": "账单"
+      }
+    },
+    {
+      "path": "pages/bills/add-bill",
+      "style": {
+        "navigationBarTitleText": "添加账单"
+      }
+    },
+    {
+      "path": "pages/statistics/statistics",
+      "style": {
+        "navigationBarTitleText": "统计"
+      }
+    },
+    {
+      "path": "pages/profile/profile",
+      "style": {
+        "navigationBarTitleText": "我的"
+      }
+    },
+    {
+      "path": "pages/profile/categories",
+      "style": {
+        "navigationBarTitleText": "分类管理"
+      }
+    },
+    {
+      "path": "pages/profile/budget",
+      "style": {
+        "navigationBarTitleText": "预算设置"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "PocketFlow",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  },
+  "entryPagePath": "pages/login/login",
+  "tabBar": {
+    "color": "#7A7E83",
+    "selectedColor": "#007AFF",
+    "borderStyle": "black",
+    "backgroundColor": "#F8F8F8",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "iconPath": "static/icons/home.png",
+        "selectedIconPath": "static/icons/home-selected.png",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/bills/bills",
+        "iconPath": "static/icons/bill.png",
+        "selectedIconPath": "static/icons/bill-selected.png",
+        "text": "账单"
+      },
+      {
+        "pagePath": "pages/statistics/statistics",
+        "iconPath": "static/icons/statistics.png",
+        "selectedIconPath": "static/icons/statistics-selected.png",
+        "text": "统计"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "iconPath": "static/icons/profile.png",
+        "selectedIconPath": "static/icons/profile-selected.png",
+        "text": "我的"
+      }
+    ]
+  }
+}

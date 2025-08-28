@@ -1,0 +1,34 @@
+{
+  "name": "uniapp-poc",
+  "version": "1.0.0",
+  "description": "PocketFlow Uniapp移动端",
+  "main": "main.js",
+  "scripts": {
+    "dev:app": "uni -p app",
+    "dev:mp-weixin": "uni -p mp-weixin",
+    "dev:h5": "uni -p h5",
+    "build:app": "uni build -p app",
+    "build:mp-weixin": "uni build -p mp-weixin",
+    "build:h5": "uni build -p h5"
+  },
+  "dependencies": {
+    "@dcloudio/uni-app": "^3.0.0-3081220230817001",
+    "@dcloudio/uni-app-plus": "^3.0.0-3081220230817001",
+    "@dcloudio/uni-h5": "^3.0.0-3081220230817001",
+    "@dcloudio/uni-mp-weixin": "^3.0.0-3081220230817001",
+    "@dcloudio/uni-ui": "^1.4.27",
+    "vue": "^3.2.45"
+  },
+  "devDependencies": {
+    "@dcloudio/uni-automator": "^3.0.0-3081220230817001",
+    "@dcloudio/uni-cli-shared": "^3.0.0-3081220230817001",
+    "@dcloudio/uni-stacktracey": "^3.0.0-3081220230817001",
+    "@dcloudio/vite-plugin-uni": "^3.0.0-3081220230817001",
+    "@vue/runtime-core": "^3.2.45",
+    "vite": "^4.0.0"
+  },
+  "browserslist": [
+    "Android >= 5",
+    "ios >= 9"
+  ]
+}

@@ -24,9 +24,15 @@ __pycache__/
 
 # 环境变量文件
 .env
+.env.local
+.env.*.local
 
 # 日志文件
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
 # 数据库文件
 *.db
@@ -40,3 +46,49 @@ __pycache__/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Node.js相关
+node_modules/
+dist/
+build/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Package lock files
+package-lock.json
+yarn.lock
+
+# Go相关
+go.mod
+go.sum
+go.work
+go.work.sum
+
+# Python虚拟环境
+venv/
+env/
+.venv/
+env/
+
+# OCR模型文件
+*.onnx
+*.pdparams
+*.pdopt
+*.pdmodel
+
+# Docker
+docker-compose.override.yml
+
+# Kubernetes
+*.k8s.yaml
+
+# Terraform
+*.tfstate
+*.tfstate.backup
+*.tfvars
+*.tfvars.json
+crash.log
+terraform.rc
