@@ -71,7 +71,7 @@
 		
 		<!-- 数字键盘弹窗 -->
 		<view class="keyboard-popup" v-if="showKeyboard" @click="closeKeyboard">
-			<view class="keyboard-container">
+			<view class="keyboard-container" @click.stop>
 				<NumberKeyboard 
 					ref="numberKeyboardRef"
 					:value="billForm.amount" 
@@ -334,8 +334,15 @@
 		bottom: 0;
 		left: 0;
 		right: 0;
+		top: 0;
 		z-index: 1000;
-		padding: 20rpx;
+		background-color: rgba(0, 0, 0, 0.5);
+		display: flex;
+		align-items: flex-end;
+	}
+	
+	.keyboard-container {
+		width: 100%;
 	}
 	
 	
