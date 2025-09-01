@@ -54,151 +54,173 @@
 	})
 	
 	// 定义emits
-	const emits = defineEmits(['input', 'confirm'])
+	const emits = defineEmits(['input', 'confirm', 'close'])
 	
 	// 响应式数据
-	const currentValue = ref(props.value.toString())
-	const expression = ref('') // 存储表达式
-	const lastInputType = ref('') // 记录上次输入的类型('number'或'operator')
+	const currentValue = ref('0') // 当前显示的值
+	const previousValue = ref(null) // 上一个值
+	const operation = ref(null) // 当前操作符
+	const waitingForOperand = ref(false) // 是否在等待操作数
 	
 	// 生命周期钩子
 	onMounted(() => {
 		console.log('NumberKeyboard组件已挂载, 接收到的value:', props.value)
+		if (props.value && props.value !== '0.00') {
+			currentValue.value = props.value.toString()
+		}
 	})
 	
 	// 计算属性
 	const displayValue = computed(() => {
-		// 如果有表达式，显示表达式，否则显示当前值
-		if (expression.value) {
-			return expression.value
-		}
-		return currentValue.value || '0.00'
+		return currentValue.value
 	})
 	
 	// 方法定义
 	const inputNumber = (num) => {
-		// 如果上次输入的是等号，清空表达式重新开始
-		if (lastInputType.value === 'equals') {
-			expression.value = ''
-			currentValue.value = '0.00'
-			lastInputType.value = ''
-		}
-		
-		if (currentValue.value === '0.00' || lastInputType.value === 'equals') {
+		console.log('输入数字:', num, 'waitingForOperand:', waitingForOperand.value)
+		if (waitingForOperand.value) {
 			currentValue.value = num
+			waitingForOperand.value = false
 		} else {
-			currentValue.value += num
-		}
-		lastInputType.value = 'number'
-		
-		// 限制小数点后两位
-		if (currentValue.value.includes('.')) {
-			const parts = currentValue.value.split('.')
-			if (parts[1].length > 2) {
-				currentValue.value = parts[0] + '.' + parts[1].substring(0, 2)
+			// 如果当前值是"0"或者以运算符结尾，则替换为新数字，否则追加
+			if (currentValue.value === '0' || 
+				currentValue.value.endsWith(' + ') || 
+				currentValue.value.endsWith(' - ') || 
+				currentValue.value.endsWith(' × ') || 
+				currentValue.value.endsWith(' ÷ ')) {
+				currentValue.value = num
+			} else {
+				currentValue.value = currentValue.value === '0' ? num : currentValue.value + num
 			}
 		}
-	}
-	
-	const inputOperator = (operator) => {
-		// 如果是等号，计算结果
-		if (operator === '=') {
-			calculateResult()
-			lastInputType.value = 'equals'
-			return
-		}
-		
-		// 如果表达式为空且当前值不为0，则将当前值加入表达式
-		if (!expression.value && currentValue.value !== '0.00') {
-			expression.value = currentValue.value
-		}
-		
-		// 如果上次输入的是数字，则将数字和运算符加入表达式
-		if (lastInputType.value === 'number') {
-			expression.value += operator
-		} 
-		// 如果上次输入的是运算符，则替换运算符
-		else if (lastInputType.value === 'operator' && expression.value.length > 0) {
-			expression.value = expression.value.slice(0, -1) + operator
-		}
-		
-		currentValue.value = '0.00'
-		lastInputType.value = 'operator'
+		// 发出input事件，让父组件实时显示当前值
+		emits('input', currentValue.value)
 	}
 	
 	const inputDecimal = () => {
-		// 如果上次输入的是等号，清空表达式重新开始
-		if (lastInputType.value === 'equals') {
-			expression.value = ''
-			currentValue.value = '0.00'
-			lastInputType.value = ''
+		if (waitingForOperand.value) {
+			currentValue.value = '0.'
+			waitingForOperand.value = false
+			return
 		}
 		
 		if (!currentValue.value.includes('.')) {
 			currentValue.value += '.'
 		}
-		lastInputType.value = 'number'
-	}
-	
-	const backspace = () => {
-		// 如果有表达式，删除表达式的最后一个字符
-		if (expression.value) {
-			expression.value = expression.value.slice(0, -1)
-			// 如果表达式为空了，重置当前值
-			if (!expression.value) {
-				currentValue.value = '0.00'
-			}
-		} 
-		// 如果没有表达式但有当前值，删除当前值的最后一个字符
-		else if (currentValue.value.length > 1) {
-			currentValue.value = currentValue.value.slice(0, -1)
-		} else {
-			currentValue.value = '0'
-		}
 	}
 	
 	const clear = () => {
-		// 清空所有内容
-		currentValue.value = '0.00'
-		expression.value = ''
-		lastInputType.value = ''
+		currentValue.value = '0'
+		previousValue.value = null
+		operation.value = null
+		waitingForOperand.value = false
 	}
 	
-	const calculateResult = () => {
-		// 如果有表达式，计算结果
-		if (expression.value) {
-			try {
-				// 处理表达式中的乘除号显示
-				let evalExpression = expression.value
-					.replace(/×/g, '*')
-					.replace(/÷/g, '/')
-				
-				// 如果最后一个字符是运算符，去掉它
-				if (['+', '-', '*', '/'].includes(evalExpression.slice(-1))) {
-					evalExpression = evalExpression.slice(0, -1)
-				}
-				
-				// 添加当前值（如果有）
-				if (currentValue.value !== '0.00') {
-					evalExpression += currentValue.value
-				}
-				
-				// 计算结果
-				const result = eval(evalExpression)
-				currentValue.value = parseFloat(result.toFixed(2)).toString()
-				expression.value = ''
-			} catch (error) {
-				console.error('计算错误:', error)
-				currentValue.value = '0.00'
-				expression.value = ''
-			}
+	// 暴露方法给父组件
+	defineExpose({
+		closeKeyboard
+	})
+	
+	const backspace = () => {
+		if (waitingForOperand.value) {
+			return
+		}
+		
+		if (currentValue.value.length === 1 || 
+			(currentValue.value.length === 2 && currentValue.value.startsWith('-'))) {
+			currentValue.value = '0'
+		} else {
+			currentValue.value = currentValue.value.slice(0, -1)
 		}
 	}
 	
+	const performOperation = () => {
+		const current = parseFloat(currentValue.value)
+		
+		if (previousValue.value !== null && operation.value) {
+			const previous = previousValue.value
+			let result
+			
+			switch (operation.value) {
+				case '+':
+					result = previous + current
+					break
+				case '-':
+					result = previous - current
+					break
+				case '*':
+					result = previous * current
+					break
+				case '/':
+					result = previous / current
+					break
+				default:
+					return
+			}
+			
+			// 格式化结果，保留两位小数
+			currentValue.value = parseFloat(result.toFixed(2)).toString()
+			previousValue.value = result
+		}
+	}
+	
+	const getOperatorSymbol = (operator) => {
+		switch (operator) {
+			case '+': return '+'
+			case '-': return '-'
+			case '*': return '×'
+			case '/': return '÷'
+			case '=': return '='
+			default: return operator
+		}
+	}
+	
+	const inputOperator = (operator) => {
+		console.log('输入运算符:', operator, '当前值:', currentValue.value, '前一个值:', previousValue.value, '当前运算符:', operation.value)
+		if (operator === '=') {
+			if (operation.value && previousValue.value !== null) {
+				performOperation()
+				// 计算完成后，将结果直接应用到金额输入框
+				let formattedValue = parseFloat(currentValue.value || '0').toFixed(2)
+				emits('input', formattedValue)
+				emits('confirm', formattedValue)
+				operation.value = null
+				previousValue.value = null
+				waitingForOperand.value = true
+			} else {
+				// 如果没有操作符，直接将当前值应用到金额输入框
+				let formattedValue = parseFloat(currentValue.value || '0').toFixed(2)
+				emits('input', formattedValue)
+				emits('confirm', formattedValue)
+			}
+			return
+		}
+		
+		// 如果之前有操作符和前一个值，说明现在要计算前两个数的结果
+		if (operation.value && previousValue.value !== null) {
+			performOperation()
+			// 自动计算完成后，将结果直接应用到金额输入框，但不关闭键盘
+			let formattedValue = parseFloat(currentValue.value || '0').toFixed(2)
+			emits('input', formattedValue)
+			// 发送一个特殊的事件来更新金额但不关闭键盘
+			emits('autoCalculate', formattedValue)
+		}
+		
+		// 设置新的操作符
+		if (previousValue.value === null) {
+			previousValue.value = parseFloat(currentValue.value)
+		}
+		operation.value = operator
+		waitingForOperand.value = true
+		// 显示运算符表达式
+		const displayText = previousValue.value !== null ? `${previousValue.value} ${getOperatorSymbol(operator)} ` : `${currentValue.value} ${getOperatorSymbol(operator)} `
+		emits('input', displayText)
+	}
+	
 	const confirm = () => {
-		// 如果有表达式，先计算结果
-		if (expression.value) {
-			calculateResult()
+		// 如果有待处理的操作和前一个值，先计算结果
+		if (operation.value && previousValue.value !== null) {
+			performOperation()
 		}
 		
 		// 格式化金额
@@ -206,9 +228,34 @@
 		emits('input', formattedValue)
 		emits('confirm', formattedValue)
 		
-		// 确认后清空表达式
-		expression.value = ''
-		lastInputType.value = 'equals'
+		// 重置状态
+		currentValue.value = '0'
+		previousValue.value = null
+		operation.value = null
+		waitingForOperand.value = false
+	}
+	
+	const closeKeyboard = () => {
+		console.log('数字键盘 closeKeyboard 函数被调用')
+		// 如果有待处理的操作和前一个值，先计算结果
+		if (operation.value && previousValue.value !== null) {
+			console.log('有待处理的计算操作，先执行计算')
+			performOperation()
+		}
+		
+		// 格式化金额
+		let formattedValue = parseFloat(currentValue.value || '0').toFixed(2)
+		console.log('格式化金额:', formattedValue)
+		emits('input', formattedValue)
+		emits('confirm', formattedValue)
+		emits('close') // 发送关闭事件
+		console.log('已发送 close 事件')
+		
+		// 重置状态
+		currentValue.value = '0'
+		previousValue.value = null
+		operation.value = null
+		waitingForOperand.value = false
 	}
 </script>
 
