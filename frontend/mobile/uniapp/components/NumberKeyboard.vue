@@ -116,11 +116,6 @@
 		waitingForOperand.value = false
 	}
 	
-	// 暴露方法给父组件
-	defineExpose({
-		closeKeyboard
-	})
-	
 	const backspace = () => {
 		if (waitingForOperand.value) {
 			return

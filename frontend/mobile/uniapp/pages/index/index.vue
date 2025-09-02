@@ -65,14 +65,9 @@
 </template>
 
 <script setup>
-	import { ref, computed } from 'vue'
+	import { ref, computed, onMounted } from 'vue'
 	
 	// 响应式数据
-	const currentDate = ref('2023年8月27日')
-	const daysSinceStart = ref(45) // 假设用户已记账45天
-	const income = ref('5,230.00')
-	const expense = ref('3,150.00')
-	const balance = ref('2,080.00')
 	const monthlyBudget = ref(5000.00)
 	const budgetUsed = ref(3150.00)
 	const recentBills = ref([
@@ -100,6 +95,17 @@
 	const budgetStatusClass = computed(() => {
 		const remaining = monthlyBudget.value - budgetUsed.value
 		return remaining < 0 ? 'over-budget' : 'under-budget'
+	})
+	
+	// 计算属性 - 当前日期
+	const currentDate = computed(() => {
+		const date = new Date()
+		const year = date.getFullYear()
+		const month = date.getMonth() + 1
+		const day = date.getDate()
+		const days = ['日', '一', '二', '三', '四', '五', '六']
+		const weekDay = days[date.getDay()]
+		return `${year}年${month}月${day}日 星期${weekDay}`
 	})
 	
 	// 方法定义
@@ -139,11 +145,17 @@
 			url: '/pages/bills/bills'
 		})
 	}
+	
+	// 初始化
+	onMounted(() => {
+		// 可以在这里添加初始化逻辑
+	})
 </script>
 
 <style>
 	.container {
 		padding: 20rpx;
+		background-color: #F0F3F5;
 	}
 
 	.header {
@@ -167,6 +179,7 @@
 		font-size: 36rpx;
 		font-weight: bold;
 		margin-top: 10rpx;
+		color: #2E2E2E;
 	}
 
 	.date {
@@ -177,7 +190,7 @@
 	.summary {
 		display: flex;
 		justify-content: space-between;
-		background-color: #fff;
+		background-color: #FFFFFF;
 		border-radius: 20rpx;
 		padding: 30rpx;
 		margin-bottom: 30rpx;
@@ -192,7 +205,7 @@
 
 	.label {
 		font-size: 28rpx;
-		color: #999;
+		color: #6D7378;
 		margin-bottom: 10rpx;
 	}
 
@@ -202,19 +215,19 @@
 	}
 
 	.income {
-		color: #00b38a;
+		color: #8BC34A;
 	}
 
 	.expense {
-		color: #ff6b6b;
+		color: #FF7F50;
 	}
 
 	.balance {
-		color: #4a90e2;
+		color: #5AA9E6;
 	}
 
 	.budget-progress {
-		background-color: #fff;
+		background-color: #FFFFFF;
 		border-radius: 20rpx;
 		padding: 30rpx;
 		margin-bottom: 30rpx;
@@ -249,7 +262,7 @@
 	.progress-fill {
 		height: 100%;
 		border-radius: 10rpx;
-		background: linear-gradient(90deg, #4a90e2, #5cdbd3);
+		background: linear-gradient(135deg, #5AA9E6, #8BC34A);
 		transition: width 0.3s ease;
 	}
 
@@ -276,14 +289,14 @@
 		width: 120rpx;
 		height: 120rpx;
 		border-radius: 50%;
-		background-color: #007AFF;
+		background: linear-gradient(135deg, #5AA9E6, #8BC34A);
 		color: #fff;
 		font-size: 60rpx;
 		font-weight: bold;
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		box-shadow: 0 8rpx 20rpx rgba(0, 122, 255, 0.3);
+		box-shadow: 0 8rpx 20rpx rgba(90, 169, 230, 0.3);
 	}
 
 	.ocr-section {
@@ -296,17 +309,17 @@
 		width: 80%;
 		height: 80rpx;
 		border-radius: 40rpx;
-		background-color: #007AFF;
+		background: linear-gradient(135deg, #5AA9E6, #8BC34A);
 		color: #fff;
 		font-size: 32rpx;
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		box-shadow: 0 4rpx 10rpx rgba(0, 122, 255, 0.3);
+		box-shadow: 0 4rpx 10rpx rgba(90, 169, 230, 0.3);
 	}
 
 	.recent-bills {
-		background-color: #fff;
+		background-color: #FFFFFF;
 		border-radius: 20rpx;
 		padding: 30rpx;
 		box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.05);
@@ -323,7 +336,7 @@
 
 	.more {
 		font-size: 28rpx;
-		color: #007AFF;
+		color: #8BC34A;
 	}
 
 	.bill-list {
@@ -365,6 +378,7 @@
 		font-size: 28rpx;
 		font-weight: bold;
 		margin-bottom: 5rpx;
+		color: #2E2E2E;
 	}
 
 	.bill-remark {

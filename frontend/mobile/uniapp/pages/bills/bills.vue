@@ -152,6 +152,7 @@
 	.container {
 		padding: 20rpx;
 		padding-bottom: 120rpx;
+		background-color: #F0F3F5;
 	}
 
 	.filter-bar {
@@ -216,15 +217,15 @@
 	}
 
 	.income {
-		color: #00b38a;
+		color: #8BC34A;
 	}
 
 	.expense {
-		color: #ff6b6b;
+		color: #FF7F50;
 	}
 
 	.balance {
-		color: #4a90e2;
+		color: #5AA9E6;
 	}
 
 	.bills-list {
@@ -282,6 +283,7 @@
 		font-size: 28rpx;
 		font-weight: bold;
 		margin-bottom: 5rpx;
+		color: #2E2E2E;
 	}
 
 	.bill-remark {
@@ -315,11 +317,11 @@
 		width: 90rpx;
 		height: 90rpx;
 		border-radius: 50%;
-		background-color: #007AFF;
+		background: linear-gradient(135deg, #5AA9E6, #8BC34A);
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		box-shadow: 0 8rpx 20rpx rgba(0, 122, 255, 0.3);
+		box-shadow: 0 8rpx 20rpx rgba(90, 169, 230, 0.3);
 		z-index: 999;
 	}
 

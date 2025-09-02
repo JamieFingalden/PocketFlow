@@ -214,8 +214,7 @@
 		uni.navigateBack()
 	}
 	
-	// 空函数，保留以避免错误
-	
+	// 空函数，保留以避免错误	
 	const closeKeyboard = () => {
 		console.log('关闭键盘函数被调用')
 		// 调用数字键盘组件的 closeKeyboard 方法来完成计算
@@ -242,7 +241,7 @@
 		background-color: #f8f8f8;
 		min-height: 100vh;
 	}
-	
+
 	.header {
 		display: flex;
 		justify-content: space-between;
