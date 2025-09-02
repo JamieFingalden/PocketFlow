@@ -8,6 +8,7 @@
 			</view>
 			<view class="date">{{ currentDate }}</view>
 		</view>
+		<!-- 确保没有残留元素 -->
 
 				
 		<!-- 预算进度条 -->
@@ -65,17 +66,19 @@
 </template>
 
 <script setup>
-	import { ref, computed, onMounted } from 'vue'
+	import { ref, computed, onMounted, nextTick } from 'vue'
+	import { onShow } from '@dcloudio/uni-app'
 	
 	// 响应式数据
 	const monthlyBudget = ref(5000.00)
 	const budgetUsed = ref(3150.00)
 	const recentBills = ref([
-		{ categoryIcon: '餐', category: '餐饮', remark: '星巴克咖啡', amount: '-35.00', time: '今天 12:30', type: 'expense' },
-		{ categoryIcon: '交', category: '交通', remark: '地铁', amount: '-5.00', time: '今天 08:15', type: 'expense' },
-		{ categoryIcon: '购', category: '购物', remark: '京东购物', amount: '-128.50', time: '昨天 20:15', type: 'expense' },
-		{ categoryIcon: '医', category: '医疗', remark: '药店', amount: '-45.00', time: '8月25日', type: 'expense' }
+		{ categoryIcon: '🍽️', category: '餐饮', remark: '星巴克咖啡', amount: '-35.00', time: '今天 12:30', type: 'expense' },
+		{ categoryIcon: '🚗', category: '交通', remark: '地铁', amount: '-5.00', time: '今天 08:15', type: 'expense' },
+		{ categoryIcon: '🛍️', category: '购物', remark: '京东购物', amount: '-128.50', time: '昨天 20:15', type: 'expense' },
+		{ categoryIcon: '🏥', category: '医疗', remark: '药店', amount: '-45.00', time: '8月25日', type: 'expense' }
 	])
+	const overlayVisible = ref(false)
 	
 	// 计算属性
 	const budgetProgress = computed(() => {
@@ -148,12 +151,33 @@
 	
 	// 初始化
 	onMounted(() => {
-		// 可以在这里添加初始化逻辑
+		// 强制更新组件以确保样式正确应用
+		nextTick(() => {
+			// 这里可以添加任何需要在DOM更新后执行的代码
+			console.log('首页组件已挂载并更新')
+		})
+	})
+	
+	// 页面显示时的处理函数
+	onShow(() => {
+		// 当页面显示时强制更新样式
+		console.log('首页页面显示')
+		// 强制更新数据以触发重新渲染
+		monthlyBudget.value = monthlyBudget.value
+		budgetUsed.value = budgetUsed.value
+		// 触发计算属性重新计算
+		budgetProgress.value = budgetProgress.value
+		
+		// 添加调试信息
+		setTimeout(() => {
+			console.log('首页显示完成，检查是否有异常元素');
+		}, 500);
 	})
 </script>
 
-<style>
+<style scoped>
 	.container {
+		height: 100%;
 		padding: 20rpx;
 		background-color: #F0F3F5;
 	}
@@ -162,7 +186,12 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+		background: linear-gradient(135deg, #5AA9E6, #8BC34A);
+		border-radius: 20rpx;
+		padding: 30rpx;
 		margin-bottom: 30rpx;
+		color: #fff;
+		box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
 	}
 
 	.user-info {
@@ -172,19 +201,21 @@
 
 	.welcome {
 		font-size: 28rpx;
-		color: #999;
+		color: #fff;
+		opacity: 0.9;
 	}
 
 	.username {
 		font-size: 36rpx;
 		font-weight: bold;
 		margin-top: 10rpx;
-		color: #2E2E2E;
+		color: #fff;
 	}
 
 	.date {
 		font-size: 28rpx;
-		color: #999;
+		color: #fff;
+		opacity: 0.9;
 	}
 
 	.summary {
@@ -325,14 +356,6 @@
 		box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.05);
 	}
 
-	.section-title {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		margin-bottom: 30rpx;
-		font-size: 32rpx;
-		font-weight: bold;
-	}
 
 	.more {
 		font-size: 28rpx;

@@ -65,7 +65,7 @@
 						<input 
 							class="input" 
 							type="text" 
-							placeholder="请输入图标字符" 
+							placeholder="请输入emoji图标，如: 🍽️ 🚗 🛍️" 
 							v-model="categoryForm.icon"
 						/>
 					</view>
@@ -93,12 +93,12 @@
 		icon: ''
 	})
 	const categories = ref([
-		{ id: 1, name: '餐饮', icon: '餐', type: 'expense' },
-		{ id: 2, name: '交通', icon: '交', type: 'expense' },
-		{ id: 3, name: '购物', icon: '购', type: 'expense' },
-		{ id: 4, name: '医疗', icon: '医', type: 'expense' },
-		{ id: 5, name: '工资', icon: '薪', type: 'income' },
-		{ id: 6, name: '奖金', icon: '奖', type: 'income' }
+		{ id: 1, name: '餐饮', icon: '🍽️', type: 'expense' },
+		{ id: 2, name: '交通', icon: '🚗', type: 'expense' },
+		{ id: 3, name: '购物', icon: '🛍️', type: 'expense' },
+		{ id: 4, name: '医疗', icon: '🏥', type: 'expense' },
+		{ id: 5, name: '工资', icon: '💰', type: 'income' },
+		{ id: 6, name: '奖金', icon: '🏆', type: 'income' }
 	])
 	
 	// 计算属性 - 根据当前标签页过滤分类
@@ -183,7 +183,7 @@
 	}
 </script>
 
-<style>
+<style scoped>
 	.container {
 		padding: 20rpx;
 		background-color: #f8f8f8;

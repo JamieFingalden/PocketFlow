@@ -83,21 +83,21 @@
 		{
 			date: '今天',
 			bills: [
-				{ categoryIcon: '餐', category: '餐饮', remark: '星巴克咖啡', amount: '-35.00', type: 'expense' },
-				{ categoryIcon: '交', category: '交通', remark: '地铁', amount: '-5.00', type: 'expense' }
+				{ categoryIcon: '🍽️', category: '餐饮', remark: '星巴克咖啡', amount: '-35.00', type: 'expense' },
+				{ categoryIcon: '🚗', category: '交通', remark: '地铁', amount: '-5.00', type: 'expense' }
 			]
 		},
 		{
 			date: '昨天',
 			bills: [
-				{ categoryIcon: '购', category: '购物', remark: '京东购物', amount: '-128.50', type: 'expense' },
-				{ categoryIcon: '医', category: '医疗', remark: '药店', amount: '-45.00', type: 'expense' }
+				{ categoryIcon: '🛍️', category: '购物', remark: '京东购物', amount: '-128.50', type: 'expense' },
+				{ categoryIcon: '🏥', category: '医疗', remark: '药店', amount: '-45.00', type: 'expense' }
 			]
 		},
 		{
 			date: '8月24日',
 			bills: [
-				{ categoryIcon: '餐', category: '餐饮', remark: '麦当劳', amount: '-28.00', type: 'expense' }
+				{ categoryIcon: '🍽️', category: '餐饮', remark: '麦当劳', amount: '-28.00', type: 'expense' }
 			]
 		}
 	])
@@ -148,7 +148,7 @@
 	}
 </script>
 
-<style>
+<style scoped>
 	.container {
 		padding: 20rpx;
 		padding-bottom: 120rpx;

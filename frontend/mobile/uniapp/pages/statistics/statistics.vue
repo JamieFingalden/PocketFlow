@@ -111,13 +111,15 @@
 			</view>
 			<view class="category-list">
 				<view class="category-item" v-for="(item, index) in categoryData" :key="index">
-					<view class="category-info">
-						<view class="category-color" :style="{ backgroundColor: item.color }"></view>
-						<text class="category-name">{{ item.name }}</text>
+					<view class="bill-icon">
+						<text class="category-icon">{{ item.icon }}</text>
 					</view>
-					<view class="category-amount">
+					<view class="bill-info">
+						<text class="bill-category">{{ item.name }}</text>
+						<text class="bill-remark">{{ item.percentage }}%</text>
+					</view>
+					<view class="bill-amount">
 						<text class="amount expense">¥{{ item.amount }}</text>
-						<text class="percentage">{{ item.percentage }}%</text>
 					</view>
 				</view>
 			</view>
@@ -136,11 +138,11 @@
 
 	const trendLabels = ref(['1月', '2月', '3月', '4月', '5月', '6月'])
 	const categoryData = ref([
-		{ name: '餐饮', value: 1200, percent: 35, color: '#4a90e2', amount: '1200.00', percentage: '35' },
-		{ name: '交通', value: 500, percent: 15, color: '#5e72e4', amount: '500.00', percentage: '15' },
-		{ name: '购物', value: 850, percent: 25, color: '#667eea', amount: '850.00', percentage: '25' },
-		{ name: '医疗', value: 350, percent: 10, color: '#764ba2', amount: '350.00', percentage: '10' },
-		{ name: '其他', value: 500, percent: 15, color: '#96ceb4', amount: '500.00', percentage: '15' }
+		{ name: '餐饮', value: 1200, percent: 35, color: '#4a90e2', amount: '1200.00', percentage: '35', icon: '🍽️' },
+		{ name: '交通', value: 500, percent: 15, color: '#5e72e4', amount: '500.00', percentage: '15', icon: '🚗' },
+		{ name: '购物', value: 850, percent: 25, color: '#667eea', amount: '850.00', percentage: '25', icon: '🛍️' },
+		{ name: '医疗', value: 350, percent: 10, color: '#764ba2', amount: '350.00', percentage: '10', icon: '🏥' },
+		{ name: '其他', value: 500, percent: 15, color: '#96ceb4', amount: '500.00', percentage: '15', icon: '📦' }
 	])
 	
 	// 原始数据
@@ -185,7 +187,7 @@
 	})
 </script>
 
-<style>
+<style scoped>
 	.container {
 		padding: 20rpx;
 		background-color: #F0F3F5;
@@ -334,17 +336,6 @@
 		padding-bottom: 15rpx;
 	}
 
-	.details-header .section-title::after {
-		content: '';
-		position: absolute;
-		bottom: 0;
-		left: 0;
-		width: 60rpx;
-		height: 4rpx;
-		background: linear-gradient(90deg, #5AA9E6, #8BC34A);
-		border-radius: 2rpx;
-	}
-
 	.category-list {
 		padding-top: 10rpx;
 	}
@@ -353,73 +344,64 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		margin-bottom: 20rpx;
-		padding: 20rpx;
-		border-radius: 15rpx;
-		background-color: #fafafa;
-		transition: all 0.3s ease;
-	}
-
-	.category-item:hover {
-		background-color: #f0f0f0;
-		transform: translateY(-2rpx);
-		box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+		padding: 20rpx 0;
+		border-bottom: 1rpx solid #f0f0f0;
 	}
 
 	.category-item:last-child {
-		margin-bottom: 0;
+		border-bottom: none;
 	}
 
-	.category-info {
+	.bill-icon {
+		width: 60rpx;
+		height: 60rpx;
+		border-radius: 50%;
+		background-color: #e0f7fa;
 		display: flex;
+		justify-content: center;
 		align-items: center;
-		flex: 1;
-	}
-
-	.category-color {
-		width: 36rpx;
-		height: 36rpx;
-		border-radius: 18rpx;
 		margin-right: 20rpx;
-		box-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.1);
 	}
 
-	.category-name {
+	.bill-info {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.bill-category {
 		font-size: 28rpx;
+		font-weight: bold;
+		margin-bottom: 5rpx;
 		color: #2E2E2E;
-		font-weight: 500;
 	}
 
-	.category-amount {
+	.bill-remark {
+		font-size: 24rpx;
+		color: #999;
+	}
+
+	.bill-amount {
 		display: flex;
 		flex-direction: column;
 		align-items: flex-end;
 	}
 
-	.amount {
-		font-size: 28rpx;
+	.bill-amount .amount {
+		font-size: 32rpx;
 		font-weight: bold;
-		margin-bottom: 5rpx;
 	}
 
-	.income {
-		color: #8BC34A;
+	.bill-amount .expense {
+		color: #ff6b6b;
 	}
 
-	.expense {
-		color: #FF7F50;
+	.bill-amount .income {
+		color: #00b38a;
 	}
 
-	.balance {
-		color: #5AA9E6;
-	}
-
-	.percentage {
-		font-size: 24rpx;
-		color: #999;
-		background-color: #f0f0f0;
-		padding: 4rpx 12rpx;
-		border-radius: 10rpx;
+	.category-icon {
+		font-size: 16px;
 	}
 
 	/* 选项卡样式 */

@@ -147,7 +147,7 @@
 	}, { deep: true })
 </script>
 
-<style>
+<style scoped>
 	.pie-chart {
 		display: flex;
 		flex-direction: column;
