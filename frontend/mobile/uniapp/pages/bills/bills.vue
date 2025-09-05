@@ -150,9 +150,11 @@
 
 <style scoped>
 	.container {
+		min-height: 100vh;
 		padding: 20rpx;
 		padding-bottom: 120rpx;
 		background-color: #F0F3F5;
+		box-sizing: border-box;
 	}
 
 	.filter-bar {

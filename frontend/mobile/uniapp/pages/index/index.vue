@@ -40,14 +40,13 @@
 			</button>
 		</view>
 
-		<!-- 最近账单列表 -->
+		<!-- 今日账单列表 -->
 		<view class="recent-bills">
 			<view class="section-title">
-				<text>最近账单</text>
-				<text class="more" @click="goToBills">更多 ></text>
+				<text>今日账单</text>
 			</view>
 			<view class="bill-list">
-				<view class="bill-item" v-for="(bill, index) in recentBills" :key="index">
+				<view class="bill-item" v-for="(bill, index) in todayBills" :key="index">
 					<view class="bill-icon">
 						<text>{{ bill.categoryIcon }}</text>
 					</view>
@@ -75,8 +74,16 @@
 	const recentBills = ref([
 		{ categoryIcon: '🍽️', category: '餐饮', remark: '星巴克咖啡', amount: '-35.00', time: '今天 12:30', type: 'expense' },
 		{ categoryIcon: '🚗', category: '交通', remark: '地铁', amount: '-5.00', time: '今天 08:15', type: 'expense' },
-		{ categoryIcon: '🛍️', category: '购物', remark: '京东购物', amount: '-128.50', time: '昨天 20:15', type: 'expense' },
-		{ categoryIcon: '🏥', category: '医疗', remark: '药店', amount: '-45.00', time: '8月25日', type: 'expense' }
+		{ categoryIcon: '🛒', category: '购物', remark: '超市买菜', amount: '-86.50', time: '今天 18:45', type: 'expense' },
+		{ categoryIcon: '🎬', category: '娱乐', remark: '电影票', amount: '-45.00', time: '今天 19:30', type: 'expense' },
+		{ categoryIcon: '⛽', category: '交通', remark: '加油', amount: '-300.00', time: '今天 10:20', type: 'expense' },
+		{ categoryIcon: '📚', category: '教育', remark: '购买书籍', amount: '-128.00', time: '今天 15:10', type: 'expense' },
+		{ categoryIcon: '👕', category: '购物', remark: '服装', amount: '-268.50', time: '昨天 14:25', type: 'expense' },
+		{ categoryIcon: '🏥', category: '医疗', remark: '药店', amount: '-45.00', time: '8月25日', type: 'expense' },
+		{ categoryIcon: '🏠', category: '住房', remark: '房租', amount: '-2500.00', time: '8月20日', type: 'expense' },
+		{ categoryIcon: '📱', category: '通讯', remark: '手机话费', amount: '-88.00', time: '8月15日', type: 'expense' },
+		{ categoryIcon: '🍽️', category: '餐饮', remark: '外卖晚餐', amount: '-28.50', time: '今天 19:00', type: 'expense' },
+		{ categoryIcon: '☕', category: '餐饮', remark: '咖啡店', amount: '-32.00', time: '今天 11:15', type: 'expense' }
 	])
 	const overlayVisible = ref(false)
 	
@@ -98,6 +105,11 @@
 	const budgetStatusClass = computed(() => {
 		const remaining = monthlyBudget.value - budgetUsed.value
 		return remaining < 0 ? 'over-budget' : 'under-budget'
+	})
+	
+	// 计算属性 - 今日账单
+	const todayBills = computed(() => {
+		return recentBills.value.filter(bill => bill.time.includes('今天'))
 	})
 	
 	// 计算属性 - 当前日期
@@ -177,9 +189,10 @@
 
 <style scoped>
 	.container {
-		height: 100%;
+		min-height: 100vh;
 		padding: 20rpx;
 		background-color: #F0F3F5;
+		box-sizing: border-box;
 	}
 
 	.header {

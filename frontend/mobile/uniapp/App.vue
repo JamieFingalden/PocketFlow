@@ -14,12 +14,16 @@
 
 <style>
 	/*每个页面公共css */
-uni-page-wrapper::after {
-	display: none !important;
-	content: none !important;
-}
-
-uni-page-body {
-	height: 100%;
-}
+	
+	/* 修复页面显示不全的问题 */
+	uni-page-body {
+		height: auto;
+		min-height: 100vh;
+	}
+	
+	/* 确保页面容器能正确显示所有内容 */
+	#app {
+		height: auto;
+		min-height: 100vh;
+	}
 </style>

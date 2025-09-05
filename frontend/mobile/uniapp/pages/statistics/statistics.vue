@@ -138,11 +138,11 @@
 
 	const trendLabels = ref(['1月', '2月', '3月', '4月', '5月', '6月'])
 	const categoryData = ref([
-		{ name: '餐饮', value: 1200, percent: 35, color: '#4a90e2', amount: '1200.00', percentage: '35', icon: '🍽️' },
-		{ name: '交通', value: 500, percent: 15, color: '#5e72e4', amount: '500.00', percentage: '15', icon: '🚗' },
-		{ name: '购物', value: 850, percent: 25, color: '#667eea', amount: '850.00', percentage: '25', icon: '🛍️' },
-		{ name: '医疗', value: 350, percent: 10, color: '#764ba2', amount: '350.00', percentage: '10', icon: '🏥' },
-		{ name: '其他', value: 500, percent: 15, color: '#96ceb4', amount: '500.00', percentage: '15', icon: '📦' }
+		{ name: '餐饮', value: 1200, percent: 35, color: '#5AA9E6', amount: '1200.00', percentage: '35', icon: '🍽️' },
+		{ name: '交通', value: 500, percent: 15, color: '#8BC34A', amount: '500.00', percentage: '15', icon: '🚗' },
+		{ name: '购物', value: 850, percent: 25, color: '#FF7F50', amount: '850.00', percentage: '25', icon: '🛍️' },
+		{ name: '医疗', value: 350, percent: 10, color: '#FFA07A', amount: '350.00', percentage: '10', icon: '🏥' },
+		{ name: '其他', value: 500, percent: 15, color: '#9370DB', amount: '500.00', percentage: '15', icon: '📦' }
 	])
 	
 	// 原始数据
@@ -189,9 +189,10 @@
 
 <style scoped>
 	.container {
+		min-height: 100vh;
 		padding: 20rpx;
 		background-color: #F0F3F5;
-		min-height: 100vh;
+		box-sizing: border-box;
 	}
 
 	.header {

@@ -75,7 +75,10 @@
 
 <style>
 	.container {
+		min-height: 100vh;
 		padding: 20rpx;
+		background-color: #F0F3F5;
+		box-sizing: border-box;
 	}
 
 	.user-profile {
