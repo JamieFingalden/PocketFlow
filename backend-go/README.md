@@ -6,16 +6,16 @@
 
 ```
 backend-go/
-├── api/                 # 控制器层，处理HTTP请求和响应
-├── cmd/api/            # 程序入口点
-├── config/             # 配置文件
-├── database/           # 数据库初始化
-├── middleware/         # 中间件
-├── models/             # 数据库模型
-├── repository/         # 数据访问层
-├── router/             # 路由注册
-├── services/           # 业务逻辑层
-├── utils/              # 工具函数
+├── api/               # 控制器层，处理HTTP请求和响应
+├── cmd/api/           # 程序入口点
+├── config/            # 配置文件
+├── database/          # 数据库初始化
+├── middleware/        # 中间件
+├── models/            # 数据库模型
+├── repository/        # 数据访问层
+├── router/            # 路由注册
+├── services/          # 业务逻辑层
+├── utils/             # 工具函数
 ├── go.mod             # Go模块文件
 ├── go.sum             # Go模块校验和
 └── SQL.sql            # 数据库表结构

@@ -10,3 +10,8 @@ type QuickTemplate struct {
 	DefaultAmount float64 `gorm:"column:default_amount" json:"default_amount"`
 	Icon          string  `gorm:"column:icon" json:"icon"`
 }
+
+// TableName 指定表名
+func (QuickTemplate) TableName() string {
+	return "quick_templates"
+}

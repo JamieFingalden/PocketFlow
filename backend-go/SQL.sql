@@ -1,4 +1,4 @@
-CREATE TABLE user (
+CREATE TABLE users (
   id BIGINT AUTO_INCREMENT PRIMARY KEY,
   username VARCHAR(50) UNIQUE NOT NULL,
   password VARCHAR(256) NOT NULL,
@@ -8,26 +8,26 @@ CREATE TABLE user (
   create_time DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE user_profile (
+CREATE TABLE user_profiles (
   id BIGINT AUTO_INCREMENT PRIMARY KEY,
   user_id BIGINT UNIQUE NOT NULL,
   avatar VARCHAR(255),
   monthly_budget DECIMAL(10,2) DEFAULT 0,
   total_balance DECIMAL(10,2) DEFAULT 0,
   preferred_currency VARCHAR(10) DEFAULT 'CNY',
-  FOREIGN KEY(user_id) REFERENCES user(id)
+  FOREIGN KEY(user_id) REFERENCES users(id)
 );
 
-CREATE TABLE category (
+CREATE TABLE categories (
   id BIGINT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(50) NOT NULL,
   type ENUM('INCOME','EXPENSE') NOT NULL,
   icon VARCHAR(100) DEFAULT NULL,
   user_id BIGINT DEFAULT NULL,
-  FOREIGN KEY(user_id) REFERENCES user(id)
+  FOREIGN KEY(user_id) REFERENCES users(id)
 );
 
-CREATE TABLE bill (
+CREATE TABLE bills (
   id BIGINT AUTO_INCREMENT PRIMARY KEY,
   user_id BIGINT NOT NULL,
   type ENUM('INCOME','EXPENSE') NOT NULL,
@@ -36,11 +36,11 @@ CREATE TABLE bill (
   remark VARCHAR(255) DEFAULT NULL,
   bill_time DATETIME NOT NULL,
   create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY(user_id) REFERENCES user(id),
-  FOREIGN KEY(category_id) REFERENCES category(id)
+  FOREIGN KEY(user_id) REFERENCES users(id),
+  FOREIGN KEY(category_id) REFERENCES categories(id)
 );
 
-CREATE TABLE quick_template (
+CREATE TABLE quick_templates (
   id BIGINT AUTO_INCREMENT PRIMARY KEY,
   user_id BIGINT NOT NULL,
   name VARCHAR(50),
@@ -48,6 +48,6 @@ CREATE TABLE quick_template (
   category_id BIGINT NOT NULL,
   default_amount DECIMAL(10,2) DEFAULT NULL,
   icon VARCHAR(100) DEFAULT NULL,
-  FOREIGN KEY(user_id) REFERENCES user(id),
-  FOREIGN KEY(category_id) REFERENCES category(id)
+  FOREIGN KEY(user_id) REFERENCES users(id),
+  FOREIGN KEY(category_id) REFERENCES categories(id)
 );

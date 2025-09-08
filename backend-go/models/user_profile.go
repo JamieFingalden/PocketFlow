@@ -9,3 +9,8 @@ type UserProfile struct {
 	TotalBalance     float64 `gorm:"column:total_balance;default:0" json:"total_balance"`
 	PreferredCurrency string `gorm:"column:preferred_currency;default:'CNY'" json:"preferred_currency"`
 }
+
+// TableName 指定表名
+func (UserProfile) TableName() string {
+	return "user_profiles"
+}

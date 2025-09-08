@@ -15,3 +15,8 @@ type Bill struct {
 	BillTime   time.Time `gorm:"not null;column:bill_time" json:"bill_time"`
 	CreateTime time.Time `gorm:"column:create_time;default:CURRENT_TIMESTAMP" json:"create_time"`
 }
+
+// TableName 指定表名
+func (Bill) TableName() string {
+	return "bills"
+}

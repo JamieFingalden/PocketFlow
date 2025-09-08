@@ -14,3 +14,8 @@ type User struct {
 	Enabled   bool      `gorm:"column:enabled;default:true" json:"enabled"`
 	CreateTime time.Time `gorm:"column:create_time;default:CURRENT_TIMESTAMP" json:"create_time"`
 }
+
+// TableName 指定表名
+func (User) TableName() string {
+	return "users"
+}

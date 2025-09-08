@@ -8,3 +8,8 @@ type Category struct {
 	Icon   string `gorm:"column:icon" json:"icon"`
 	UserID *uint64 `gorm:"column:user_id" json:"user_id"`
 }
+
+// TableName 指定表名
+func (Category) TableName() string {
+	return "categories"
+}
